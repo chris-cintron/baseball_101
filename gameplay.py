@@ -53,200 +53,132 @@ def score():
 
  
 def homerun():
+  global runs
+  global home_plate_scored
+  global first_base
+  global second_base
+  global third_base
 
-    global runs    
-    global home_plate_scored
-    global first_base
-    global second_base
-    global third_base
-    
-    
-    if first_base == True:
-        runs += 1
-    if first_base == True and second_base == True and third_base == True:
-        runs += 3
-    if first_base == True and second_base == True and third_base == False:
-        runs += 2
-    if first_base == True and  second_base == False and third_base == True:
-        runs += 2
-    if first_base == False and  second_base == False and third_base == True:
-        runs += 1
-    if first_base == False and  second_base == True and third_base == True:
-        runs += 2
-    if first_base == False and  second_base == True and third_base == False:
-        runs += 1
-    if first_base == True and  second_base == False and third_base == True:
-        runs += 2
-    first_base = False
-    second_base = False
-    third_base = False
+  # Add a run for batter themself
+  runs += 1
+  home_plate_scored = True
 
-    home_plate_scored = True
-    print("Touch all the bases!")
-    runs += 1
-    
-    score()
-    next_batter()    
+  # Add runs for runners on base (who haven't scored yet)
+  runs += first_base + (second_base and not third_base) + third_base
+
+  first_base = False
+  second_base = False
+  third_base = False
+
+  print("Touch all the bases!")
+  score()
+  next_batter()
+
 
 
 def single():
-    global runs
-    global first_base
-    global second_base
-    global third_base
-    global home_plate_scored
-    
-    if first_base == True:
-        first_base = True
-        second_base = True
-        third_base = False
-    elif first_base == True and second_base == True:
-        first_base= True
-        second_base = True        
-        third_base = True
-    elif first_base == True and second_base== True and third_base==True:
-        runs += 1
-        first_base = True
-        second_base = True
-        third_base = True
-    elif second_base == True:
-        first_base = True
-        second_base = False
-        third_base = True
-    elif second_base == True and third_base == True:
-        first_base = True
-        second_base = False
-        third_base = True
-        home_plate_scored = True
-        runs +=1
-    elif third_base == True:
-        first_base = True
-        second_base = False
-        third_base = False
-        home_plate_scored = True
-        runs += 1
-    
-    first_base = True
-    second_base = False
+  global runs
+  global first_base
+  global second_base
+  global third_base
+  global home_plate_scored
+
+  # Move runner on third (if any) and score them
+  if third_base:
+    runs += 1
+    print("Runner on third scores!")  # Announce the score
     third_base = False
-    print ('\nYou reached first base', '\n')   
-    
-    score ()
-    next_batter() 
+
+  # Move runner on second to third (if any)
+  elif second_base:
+    third_base = True
+    second_base = False
+    print("Runner on second advances to third.")
+
+  # Move runner on first to second (if any)
+  elif first_base:
+    second_base = True
+    first_base = False
+    print("Runner on first advances to second.")
+
+  # Move batter to first
+  first_base = True
+  print("You single and reach first base!")
+
+  # Reset home_plate_scored for next batter
+  home_plate_scored = False
+  score()
+  next_batter()
+
 
 
 def double():
+  global runs
+  global first_base
+  global second_base
+  global third_base
+  global home_plate_scored
 
-    
-    global first_base
-    global second_base
-    global third_base
-    global home_plate_scored
-    global runs
-    
-    
-    if first_base == True:
-        first_base = False
-        second_base = True
-        third_base = True
-    elif first_base==True and second_base == True :
-        home_plate_scored = True
-        runs += 1
-        first_base = False
-        second_base = True
-        third_base = False
-    elif first_base == True and third_base == True:
-        home_plate_scored = True
-        runs += 1
-        first_base = False
-        second_base = True
-        third_base = False
-    elif first_base == True and second_base == True and third_base == True:
-        home_plate_scored = True
-        runs += 2
-        first_base = False
-        second_base = True
-        third_base = True
-    elif second_base == True:
-        first_base = False
-        second_base = True
-        third_base = False
-        home_plate_scored = True
-        runs += 1
-    elif second_base == True and third_base == True:
-        home_plate_scored = True
-        runs += 2
-        first_base = False
-        second_base = True
-        third_base = False
-    elif third_base == True:
-        home_plate_scored = True
-        runs += 1
-        first_base = False
-        second_base = True
-        third_base = False
-    
-    second_base = True
-    first_base = False
+  # Move runner on third (if any) and score them
+  if third_base:
+    runs += 1
     third_base = False
-    print ('\nYou reached second base''\n')   
-    
-    score()
-    next_batter()
+
+  # Move runner on second to third and score them
+  elif second_base:
+    runs += 1
+    third_base = True
+    second_base = False
+
+  # Move runner on first to third (considering it wasn't scored on the triple)
+  elif first_base:
+    third_base = True
+    # We don't add a run here because the runner from first moved to third on the triple and shouldn't score again
+
+  # Move batter to second
+  second_base = True
+
+  # Add runs for runners who HAVEN'T scored yet (were on 2nd or 3rd), considering runner wasn't created by the batter
+  if second_base and not (first_base or second_base or third_base):  # Check for runner on second AND no runners on before
+    runs += second_base
+
+  # Reset home_plate_scored for next batter
+  home_plate_scored = False
+  print ('\nYou hit a DOUBLE and reached second base!\n')
+  score()
+  next_batter()
 
 
 def triple():
+  global runs
+  global first_base
+  global second_base
+  global third_base
+  global home_plate_scored
 
-    global runs
-    global first_base
-    global second_base
-    global third_base
-    global home_plate_scored
-    
-    if first_base == True:
-        home_plate_scored = True
-        runs +=1
-        first_base = False
-        second_base = False
-        third_base = True
-    elif first_base == True and second_base == True:
-        first_base = False
-        second_base = False
-        third_base = True
-        home_plate_scored = True
-        runs +=2
-    elif first_base == True and third_base == True:
-        home_plate_scored = True
-        runs +=2
-        first_base = False
-        second_base = False
-        third_base = True
-    elif second_base == True:
-        home_plate_scored = True
-        runs +=1
-        first_base = False
-        second_base = False
-        third_base = True
-    elif second_base == True and third_base == True:
-        home_plate_scored = True
-        runs +=2
-        first_base = False
-        second_base = False
-        third_base = True
-    elif third_base == True:
-        home_plate_scored = True
-        runs +=1
-        first_base = False
-        second_base = False
-        third_base = True
-    
+  # Move runners on third and second (if any) and score them (if not already scored)
+  if third_base and not home_plate_scored:  # Only score runner on third if not scored before
+    runs += 1
+    third_base = False
+  if second_base and not home_plate_scored:  # Only score runner on second if not scored before
+    runs += 1
+    third_base = True
+    second_base = False
+
+  # Move runner on first to third
+  elif first_base:
     third_base = True
     first_base = False
-    second_base = False
-    print ('\nYou reached third base' '\n')
-    
-    score()
-    next_batter()
+
+  # Move batter to third
+  third_base = True
+
+  # Reset home_plate_scored for next batter
+  home_plate_scored = False
+  print ('\nYou hit a TRIPLE and reached third base!\n')
+  score()
+  next_batter()
+
 
     
 def out():
@@ -259,7 +191,8 @@ def out():
 
         outs += 1
 
-        print ('Outs: ', outs, '\n')
+        print ('Outs: ', outs)
+        print('Runs:', runs)
 
         if outs == 3:
             print ('End of inning')
@@ -302,7 +235,4 @@ if choice.upper() == 'Y':
 else:
     print("That's too bad!")
     sys.ext()
-
-
-
 
